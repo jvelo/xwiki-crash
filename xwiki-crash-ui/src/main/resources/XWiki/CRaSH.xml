@@ -1114,6 +1114,7 @@
   top: -14px;
   width:100%;
   opacity: 0.92;
+  z-index: 1000;
 }
 div.console div.jquery-console-inner{
 /*  height:500px;*/
