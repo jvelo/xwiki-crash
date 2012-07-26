@@ -880,19 +880,23 @@
 
   XWiki.CRaSH = Class.create({
 
-      crashDocument: new XWiki.Document("CRaSH", "XWiki")
+      options : {
+        triggerKey: "F9"     
+      }
+
+    , templates: {
+        console : "&lt;div id='console-wrapper' class='hidden'&gt;&lt;div id='console' class='console'&gt;&lt;/div&gt;&lt;/div&gt;"
+      }
+
+    , crashDocument: new XWiki.Document("CRaSH", "XWiki")
 
     , header:
               "\n" +
-              "\n" +
-              "This CRaSH demo will show you a few CRaSH features:\n" +
+              "This is a CRaSH console in XWiki.:\n" +
 
               "\n" +
-              "Database:\n" +
-              "% jdbc open java:comp/env/jdbc/crash                       open a connection to the database\n" +
-              "% jdbc info                                                display connection info\n" +
-              "% jdbc execute select count(*) from dual where 1=1         execute some SQL\n" +
-              "% jdbc close                                               close the current jdbc connection\n" +
+              "Extension manager:\n" +
+              "% em list core                                             Lists core extensions\n" +
 
               "\n" +
               "Threads:\n" +
@@ -905,11 +909,12 @@
               "% system freemem                                           display amount of free memory\n" +
 
               "\n" +
-              "Type 'help' to show the available commands\n"
+              "Type 'help' to show all available commands\n"
 
     , initialize: function() {
+        this.injectConsole();
         this.getWelcome(function(data){
-         var controller = $j("#console").console({
+        this.controller = $j("#console").console({
              promptLabel: data.prompt
            , autofocus: true
            , welcomeMessage : this.header + data.welcome
@@ -918,7 +923,45 @@
            , cancelHandle: this.cancelHandle.bind(this)
            , completeHandle: this.completeHandle.bind(this)
          });
+
+         shortcut.add(this.options.triggerKey, this.onToggle.bindAsEventListener(this));
+         window.onresize = this.onResize.bind(this);
+         this.onResize();
       }.bind(this))
+    }
+
+    , onResize: function() {
+         $("console").down(".jquery-console-inner").setStyle({
+             height: "" + (document.viewport.getHeight() - 14) + "px"
+             // The 14px is compensating for the negative margin top of the console container.
+         });
+    }
+
+    , onToggle: function(event) {   
+        $("console-wrapper").toggleClassName("hidden")
+        if (!$("console-wrapper").hasClassName("hidden")) {
+            (function(){
+              // Force focus on the prompt when revealing the console
+              // This is defered after the event is finished being process to ensure the trigger key is not going
+              // to be typed in the console prompt.
+              // shortcut.add normally does not propagate key events by default, but it seems the console takes it before anyway
+              // thus this trick
+              this.controller.typer.focus();
+              this.controller.scrollToBottom();
+            }).bind(this).defer();
+        }
+        else {
+            // Make sure to give up the focus before giving back the event.
+            // Same reason as above: we don't want the trigger key to be interpreted by the prompt
+            $("mainContentArea").focus();
+        }
+
+    }
+
+    , injectConsole: function() {
+        if ($("console") == null) {
+            $$("body")[0].insert(this.templates.console);
+        }
     }
 
     , cancelHandle: function() {
@@ -1067,9 +1110,13 @@
   border-radius:6px;
   color: #999999;
   white-space:pre-wrap;
+  position: absolute;
+  top: -14px;
+  width:100%;
+  opacity: 0.92;
 }
 div.console div.jquery-console-inner{
-  height:500px;
+/*  height:500px;*/
   padding:0.5em;
   overflow:auto;
 }
@@ -1122,24 +1169,24 @@ if (request.do &amp;&amp; xwiki.hasAccessLevel("programming", doc.fullName)) {
   }
   println "}}}"
 }
-else if (request.do) {
+else {
+  if (!xwiki.hasAccessLevel("programming", doc.fullName)) {
     // Does not have prog rights
     println """
 {{error}}
-Sorry mate, programming rights are required to use the CRaSH console.
+Sorry mate, programming access level is required to access this premium content.
 {{/error}}
 """
-}
-else {
+  }
+  else {
     xwiki.jsx.use("XWiki.jQuery")
     xwiki.jsx.use("XWiki.CRaSH")
+
     println """
-{{html}}
-  &lt;div class="center"&gt;
-    &lt;div id="console" class="console"&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-{{/html}}
+{{info}}
+This is an integration of the CRaSH console in XWiki. Type F9 and give it a try !
+{{/info}}
 """
+  }
 }
 {{/groovy}}</content></xwikidoc>
