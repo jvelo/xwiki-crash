@@ -8,13 +8,14 @@ import org.crsh.cmdline.annotations.Required
 import org.crsh.shell.ui.UIBuilder
 
 import org.xwiki.extension.CoreExtension;
+import org.xwiki.extension.InstalledExtension;
 
 @Usage("XWiki extension manager commands")
 class em extends CRaSHCommand {
 
-  @Usage("List extensions")
+  @Usage("List core extensions")
   @Command
-  void list() {
+  void core() {
       def extensionRepository = 
              com.xpn.xwiki.web.Utils.getComponent(org.xwiki.extension.repository.CoreExtensionRepository.class)
              
@@ -24,4 +25,16 @@ class em extends CRaSHCommand {
       }
   }
 
+  @Usage("List installed extensions")
+  @Command
+  void installed() {
+      def extensionScriptService =
+             com.xpn.xwiki.web.Utils.getComponent(org.xwiki.script.service.ScriptService.class, "extension")
+             
+      Collection<InstalledExtension> extensions = extensionScriptService.getInstalledExtensions();
+      extensions.each { extension ->
+        out << "${extension.id} (${extension.name})\n"
+      }
+  }
+  
 }
