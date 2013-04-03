@@ -25,21 +25,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.xwiki.platform</groupId>
-    <artifactId>xwiki-platform-core</artifactId>
+    <groupId>org.xwiki.commons</groupId>
+    <artifactId>xwiki-commons-pom</artifactId>
     <version>3.5.1</version>
   </parent>
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>xwiki-crash</artifactId>
-  <name>XWiki Contrib - CRaSH integration</name>
+  <name>XWiki Contrib - CRaSH integration - Parent POM</name>
   <version>1.3-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <description>CRaSH integration in XWiki.</description>
+  <description>CRaSH integration in XWiki</description>
   <scm>
     <connection>scm:git:git://github.com/jvelo/xwiki-crash.git</connection>
     <developerConnection>scm:git:git@github.com:jvelo/xwiki-crash.git</developerConnection>
     <url>https://github.com/jvelo/xwiki-crash</url>
   </scm>
+  <developers>
+    <developer>
+      <id>jvelo</id>
+      <name>Jerome Velociter</name>
+    </developer>
+  </developers>
   <distributionManagement>
     <repository>
       <id>xwiki-staging</id>
@@ -48,7 +54,7 @@
     </repository>
   </distributionManagement>
   <properties>
-    <xwiki.version>3.5.1</xwiki.version>
+    <xwiki.version>${commons.version}</xwiki.version>
   </properties>
   <modules>
     <module>xwiki-crash-api</module>

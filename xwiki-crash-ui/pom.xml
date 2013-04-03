@@ -32,10 +32,12 @@
   <artifactId>xwiki-crash-ui</artifactId>
   <name>XWiki Contrib - CRaSH integration - UI</name>
   <packaging>xar</packaging>
-  <description>Wiki pages for the XWiki Crash integration</description>
+  <description>CRaSH Integration Application</description>
   <properties>
     <!-- Don't run CLIRR here since there's no Java code. -->
     <xwiki.clirr.skip>true</xwiki.clirr.skip>
+    <!-- Name to display by the Extension Manager -->
+    <xwiki.extension.name>CRaSH Console</xwiki.extension.name>
   </properties>
   <dependencies>
     <dependency>
@@ -45,4 +47,22 @@
       <scope>runtime</scope>
     </dependency>
   </dependencies>
+  <build>
+    <!-- Needed to add support for the XAR packaging -->
+    <extensions>
+      <extension>
+        <groupId>org.xwiki.commons</groupId>
+        <artifactId>xwiki-commons-tool-xar-handlers</artifactId>
+        <version>${xwiki.version}</version>
+      </extension>
+    </extensions>
+    <plugins>
+      <!-- The XAR packaging uses the XAR plugin and thus we need to define what version to use -->
+      <plugin>
+        <groupId>org.xwiki.commons</groupId>
+        <artifactId>xwiki-commons-tool-xar-plugin</artifactId>
+        <version>${xwiki.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>
